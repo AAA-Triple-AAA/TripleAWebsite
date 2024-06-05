@@ -1,0 +1,16 @@
+@font-face {
+    font-family: font1;
+    src: url("/fonts/PressStart2P-Regular.ttf");
+}
+
+:root {
+    --dark-green: #042a2b;
+    --moonstone: #5eb1bf;
+    --light-cyan: #cdedf6;
+    --orange: #ef7b45;
+    --red: #d84727;
+}
+
+body {
+    font-family: font1;
+}
