@@ -25,3 +25,343 @@ body {
     flex-direction: column;
     justify-content: space-around;
 }
+
+.navbar {
+    position: fixed;
+    z-index: 1;
+    width: 100vw;
+    height: 100px;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    font-size: large;
+    margin-right: 20px;
+    word-wrap: break-word;
+}
+
+.navbar a:hover {
+    background-color: #4e4e50;
+    padding: 2px;
+    color: #c3073f;
+}
+
+.navbar a:active {
+    background-color: #6f2232;
+    padding: 2px;
+    color: #1a1a1d;
+}
+
+.welcome {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.my-name {
+    font-size: 100px;
+    margin: 20px;
+}
+.my-name span {
+    margin-left: -10px;
+}
+.my-name span:nth-last-of-type(1) {
+    animation: color-change1 3s linear infinite;
+}
+.my-name span:nth-last-of-type(2) {
+    animation: color-change2 3s linear infinite;
+}
+.my-name span:nth-last-of-type(3) {
+    animation: color-change3 3s linear infinite;
+}
+.my-name span:nth-last-of-type(4) {
+    animation: color-change4 3s linear infinite;
+}
+.my-name span:nth-last-of-type(5) {
+    animation: color-change5 3s linear infinite;
+}
+.my-name span:nth-last-of-type(6) {
+    animation: color-change6 3s linear infinite;
+}
+
+@keyframes color-change1 {
+    0% {
+        color: red;
+    }
+    8% {
+        color: orange;
+    }
+    16% {
+        color: yellow;
+    }
+    32% {
+        color: green;
+    }
+    40% {
+        color: blue;
+    }
+    48% {
+        color: purple;
+    }
+    56% {
+        color: indigo;
+    }
+    64% {
+        color: purple;
+    }
+    72% {
+        color: blue;
+    }
+    80% {
+        color: green;
+    }
+    88% {
+        color: yellow;
+    }
+    100% {
+        color: orange;
+    }
+}
+@keyframes color-change2 {
+    0% {
+        color: orange;
+    }
+    8% {
+        color: yellow;
+    }
+    16% {
+        color: green;
+    }
+    32% {
+        color: blue;
+    }
+    40% {
+        color: purple;
+    }
+    48% {
+        color: indigo;
+    }
+    56% {
+        color: purple;
+    }
+    64% {
+        color: blue;
+    }
+    72% {
+        color: green;
+    }
+    80% {
+        color: yellow;
+    }
+    88% {
+        color: orange;
+    }
+    100% {
+        color: red;
+    }
+}
+@keyframes color-change3 {
+    0% {
+        color: yellow;
+    }
+    8% {
+        color: green;
+    }
+    16% {
+        color: blue;
+    }
+    32% {
+        color: purple;
+    }
+    40% {
+        color: indigo;
+    }
+    48% {
+        color: purple;
+    }
+    56% {
+        color: blue;
+    }
+    64% {
+        color: green;
+    }
+    72% {
+        color: yellow;
+    }
+    80% {
+        color: orange;
+    }
+    88% {
+        color: red;
+    }
+    100% {
+        color: orange;
+    }
+}
+@keyframes color-change4 {
+    0% {
+        color: green;
+    }
+    8% {
+        color: blue;
+    }
+    16% {
+        color: purple;
+    }
+    32% {
+        color: indigo;
+    }
+    40% {
+        color: purple;
+    }
+    48% {
+        color: blue;
+    }
+    56% {
+        color: green;
+    }
+    64% {
+        color: yellow;
+    }
+    72% {
+        color: orange;
+    }
+    80% {
+        color: red;
+    }
+    88% {
+        color: orange;
+    }
+    100% {
+        color: yellow;
+    }
+}
+@keyframes color-change4 {
+    0% {
+        color: blue;
+    }
+    8% {
+        color: purple;
+    }
+    16% {
+        color: indigo;
+    }
+    32% {
+        color: purple;
+    }
+    40% {
+        color: blue;
+    }
+    48% {
+        color: green;
+    }
+    56% {
+        color: yellow;
+    }
+    64% {
+        color: orange;
+    }
+    72% {
+        color: red;
+    }
+    80% {
+        color: orange;
+    }
+    88% {
+        color: yellow;
+    }
+    100% {
+        color: green;
+    }
+}
+@keyframes color-change5 {
+    0% {
+        color: purple;
+    }
+    8% {
+        color: indigo;
+    }
+    16% {
+        color: purple;
+    }
+    32% {
+        color: blue;
+    }
+    40% {
+        color: green;
+    }
+    48% {
+        color: yellow;
+    }
+    56% {
+        color: orange;
+    }
+    64% {
+        color: red;
+    }
+    72% {
+        color: orange;
+    }
+    80% {
+        color: yellow;
+    }
+    88% {
+        color: green;
+    }
+    100% {
+        color: blue;
+    }
+}
+@keyframes color-change6 {
+    0% {
+        color: indigo;
+    }
+    8% {
+        color: purple;
+    }
+    16% {
+        color: blue;
+    }
+    32% {
+        color: green;
+    }
+    40% {
+        color: yellow;
+    }
+    48% {
+        color: orange;
+    }
+    56% {
+        color: red;
+    }
+    64% {
+        color: orange;
+    }
+    72% {
+        color: yellow;
+    }
+    80% {
+        color: green;
+    }
+    88% {
+        color: blue;
+    }
+    100% {
+        color: purple;
+    }
+}
