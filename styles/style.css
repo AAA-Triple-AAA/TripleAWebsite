@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 @font-face {
@@ -8,35 +9,25 @@
     src: url("/fonts/PressStart2P-Regular.ttf");
 }
 
-:root {
-    --dark-green: #042a2b;
-    --moonstone: #5eb1bf;
-    --light-cyan: #cdedf6;
-    --orange: #ef7b45;
-    --red: #d84727;
-}
-
 body {
     font-family: font1;
     height: 100vh;
-    margin: 0 0 0 20px;
+    margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 .navbar {
-    position: fixed;
     z-index: 1;
+    position: fixed;
+    top: 0;
     width: 100vw;
     height: 100px;
-    top: 0;
-    left: 0;
     background-color: #ffffff;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-around;
     align-items: center;
 }
 
@@ -44,41 +35,44 @@ body {
     text-decoration: none;
     color: #000;
     font-weight: bold;
-    font-size: large;
-    margin-right: 20px;
-    word-wrap: break-word;
+    font-size: 42px;
 }
 
 .navbar a:hover {
-    background-color: #4e4e50;
-    padding: 2px;
-    color: #c3073f;
+    padding: 10px;
+    background-color: #000;
+    color: yellow;
+    border: #000 solid 2px;
+    border-radius: 10px;
 }
 
 .navbar a:active {
-    background-color: #6f2232;
-    padding: 2px;
-    color: #1a1a1d;
+    color: red;
 }
 
-.welcome {
+.welcome,
+.profile {
     display: flex;
+    font-size: 20px;
     height: 100vh;
     width: 100vw;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.welcome-heading {
+    width: 100%;
 }
 
 .my-name {
     font-size: 100px;
     margin: 20px;
 }
+
 .my-name span {
-    margin-left: -10px;
+    margin: 0 -0.3em 0 -0.3em;
 }
 .my-name span:nth-last-of-type(1) {
     animation: color-change1 3s linear infinite;
@@ -363,5 +357,59 @@ body {
     }
     100% {
         color: purple;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .navbar a {
+        text-decoration: none;
+        color: #000;
+        font-weight: bold;
+        font-size: 3vw;
+    }
+
+    .navbar a:hover {
+        padding: 2px;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .navbar a:active {
+        padding: 2px;
+        border-radius: 10px;
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 809px) {
+    .navbar {
+        margin-top: 20px;
+        z-index: 1;
+        width: 100vw;
+        height: 200px;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar a {
+        text-decoration: none;
+        color: #000;
+        font-weight: bold;
+        font-size: 5vw;
+    }
+
+    .my-name {
+        font-size: 10vw;
+        margin: 20px;
+    }
+
+    .welcome-heading {
+        width: 100%;
+        font-size: 5vw;
+        text-align: center;
     }
 }
