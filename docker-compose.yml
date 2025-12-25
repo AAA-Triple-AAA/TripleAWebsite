@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ghcr.io/AAA-Triple-AAA/tripleawebsite:latest
+    image: ghcr.io/aaa-triple-aaa/tripleawebsite:latest
     container_name: triplea_app
     restart: always
     environment:
