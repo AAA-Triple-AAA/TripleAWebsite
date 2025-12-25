@@ -1,0 +1,116 @@
+﻿@page "/admin/skills"
+@using Microsoft.EntityFrameworkCore
+@using TripleAWebsite.Frontend.Data
+@using TripleAWebsite.Frontend.Services
+@inject ApplicationDbContext DbContext
+@inject FileService FileService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center">
+            <a href="/admin/dashboard" class="btn btn-outline-secondary me-3" title="Back to Dashboard">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="fw-bold m-0">Manage Skills</h1>
+        </div>
+        <a href="/admin/skill/edit" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New
+        </a>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="spinner-border text-primary" role="status"></div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var s in _skills)
+            {
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card h-100 text-center p-3 shadow-sm position-relative hover-shadow transition-all">
+
+                        <a href="/admin/skill/edit/@s.Id" class="text-decoration-none text-dark d-flex flex-column align-items-center h-100 justify-content-center">
+
+                            <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 60px; width: 60px;">
+                                @if (!string.IsNullOrEmpty(s.IconUrl))
+                                {
+                                    <img src="@s.IconUrl" style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <span class="fw-bold text-muted">@s.Name.Substring(0, Math.Min(2, s.Name.Length)).ToUpper()</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="fw-bold text-truncate w-100">@s.Name</div>
+
+                            <div class="mt-2">
+                                <span class="badge bg-light text-secondary border">Order: @s.DisplayOrder</span>
+                            </div>
+                        </a>
+
+                        <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                style="width: 24px; height: 24px; padding: 0; line-height: 0;"
+                                title="Delete Skill"
+                                @onclick="() => DeleteSkill(s)">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @if (_skills.Count == 0)
+            {
+                <div class="col-12 text-center text-muted py-5">
+                    <i class="bi bi-tools display-4 mb-3 d-block opacity-25"></i>
+                    No skills added yet.
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+</style>
+
+@code {
+    private List<Skill> _skills = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _skills = await DbContext.Skills
+            .OrderBy(s => s.DisplayOrder)
+            .ToListAsync();
+        isLoading = false;
+    }
+
+    private async Task DeleteSkill(Skill skill)
+    {
+        // 1. Delete icon file
+        if (!string.IsNullOrEmpty(skill.IconUrl))
+        {
+            FileService.DeleteFile(skill.IconUrl);
+        }
+
+        // 2. Delete DB record
+        DbContext.Skills.Remove(skill);
+        await DbContext.SaveChangesAsync();
+
+        // 3. UI Update
+        _skills.Remove(skill);
+    }
+}

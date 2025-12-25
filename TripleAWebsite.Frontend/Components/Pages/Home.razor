@@ -1,0 +1,187 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@using TripleAWebsite.Frontend.Data
+@inject ApplicationDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>@(UserProfile?.FullName ?? "Portfolio") | @(UserProfile?.JobTitle ?? "Software Developer")</PageTitle>
+
+<div class="container-fluid portfolio-layout position-relative">
+
+    <a href="/admin/dashboard" class="position-absolute top-0 start-0 m-3 text-secondary opacity-25 text-decoration-none"
+       title="Admin Login" style="z-index: 1000; transition: opacity 0.3s;"
+       onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.25'">
+        <i class="bi bi-gear-fill fs-4"></i>
+    </a>
+
+    <div class="row h-100">
+
+        <div class="col-lg-4 d-flex flex-column justify-content-center border-end p-5">
+
+            <h1 class="display-1 fw-bold text-primary mb-2">
+                @(UserProfile?.FullName ?? "Your Name")
+            </h1>
+            <h4 class="text-secondary text-uppercase letter-spacing-2 mb-4">
+                @(UserProfile?.JobTitle ?? "Job Title")
+            </h4>
+
+            <p class="lead fs-5 text-muted mb-5">
+                @(UserProfile?.Bio ?? "Welcome to my portfolio. This content is currently empty. Please log in to the admin panel to create your profile.")
+            </p>
+
+            <hr class="mb-5 border-secondary opacity-25" />
+
+            <h5 class="fw-bold text-uppercase text-muted small mb-3">Tech Stack</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var skill in Skills.Take(6))
+                {
+                    <div class="skill-circle" title="@skill.Name">
+                        @if (!string.IsNullOrEmpty(skill.IconUrl))
+                        {
+                            <img src="@skill.IconUrl" alt="@skill.Name" />
+                        }
+                        else
+                        {
+                            <span class="small fw-bold">@skill.Name.Substring(0, Math.Min(2, skill.Name.Length))</span>
+                        }
+                    </div>
+                }
+                @if (Skills.Count > 6)
+                {
+                    <button class="skill-circle btn btn-outline-light text-primary fw-bold shadow-sm border" @onclick="() => showSkillsModal = true">
+                        +@(Skills.Count - 6)
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4 d-flex flex-column align-items-center justify-content-center border-end p-5 bg-light">
+
+            <div class="ratio ratio-1x1 rounded-circle overflow-hidden shadow-lg mb-5" style="max-width: 450px; width: 100%;">
+                <img src="@(UserProfile?.ProfilePhotoUrl ?? "https://placehold.co/800?text=No+Image")"
+                     alt="Profile Photo" style="object-fit: cover;" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(UserProfile?.ResumeUrl))
+            {
+                <a href="@UserProfile.ResumeUrl?v=@DateTime.Now.Ticks" target="_blank" class="btn btn-dark btn-lg mb-5 px-5 py-3 rounded-pill shadow">
+                    <i class="bi bi-file-earmark-person me-2"></i> Download Resume
+                </a>
+            }
+
+            <div class="d-flex gap-5 fs-2">
+                @foreach (var link in SocialLinks)
+                {
+                    <a href="@link.Url" target="_blank" class="text-dark hover-zoom" title="@link.Name">
+                        <i class="@link.IconClass"></i>
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4 h-100 p-0">
+            <div class="d-flex flex-column h-100">
+                <div class="p-4 bg-white border-bottom shadow-sm z-index-1">
+                    <h2 class="fw-bold mb-0">Featured Projects</h2>
+                </div>
+
+                <div class="scrollable-col p-4 bg-light">
+                    @foreach (var project in Projects)
+                    {
+                        <div class="card project-card border-0 shadow-sm mb-4 overflow-hidden">
+                            @if (!string.IsNullOrEmpty(project.ImageUrl))
+                            {
+                                <div class="ratio ratio-16x9">
+                                    <img src="@project.ImageUrl" class="card-img-top object-fit-cover" alt="@project.Name">
+                                </div>
+                            }
+                            <div class="card-body p-4">
+                                <h4 class="card-title fw-bold mb-2">@project.Name</h4>
+                                <p class="card-text text-secondary mb-4">@project.Description</p>
+                                <div class="d-flex gap-2">
+                                    @if (!string.IsNullOrEmpty(project.GithubUrl))
+                                    {
+                                        <a href="@project.GithubUrl" target="_blank" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                                            <i class="bi bi-github"></i> Code
+                                        </a>
+                                    }
+                                    @if (!string.IsNullOrEmpty(project.LiveUrl))
+                                    {
+                                        <a href="@project.LiveUrl" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
+                                            <i class="bi bi-box-arrow-up-right"></i> Live
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Projects.Any())
+                    {
+                        <div class="alert alert-warning">No projects found. Add them in the Admin panel!</div>
+                    }
+
+                    <div style="height: 50px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showSkillsModal)
+{
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Technical Arsenal</h5>
+                    <button type="button" class="btn-close" @onclick="() => showSkillsModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush">
+                        @foreach (var skill in Skills)
+                        {
+                            <div class="list-group-item d-flex align-items-center py-3 border-light">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <span class="fw-medium fs-5">@skill.Name</span>
+                                @if (!string.IsNullOrEmpty(skill.IconUrl))
+                                {
+                                    <span class="ms-auto badge bg-light text-dark rounded-pill">Major Skill</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool showSkillsModal = false;
+
+    // Data Containers
+    private Profile? UserProfile;
+    private List<Skill> Skills = new();
+    private List<Project> Projects = new();
+    private List<SocialLink> SocialLinks = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. Fetch Profile (Take the first one found, or null)
+        UserProfile = await DbContext.Profiles.FirstOrDefaultAsync();
+
+        // 2. Fetch Lists with Sorting
+        Skills = await DbContext.Skills
+            .OrderBy(s => s.DisplayOrder)
+            .ToListAsync();
+
+        Projects = await DbContext.Projects
+            .OrderBy(p => p.DisplayOrder)
+            .ToListAsync();
+
+        SocialLinks = await DbContext.SocialLinks
+            .OrderBy(l => l.DisplayOrder)
+            .ToListAsync();
+    }
+}

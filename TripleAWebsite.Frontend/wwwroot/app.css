@@ -1,0 +1,78 @@
+/* Make the root container fill the height on desktop */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Custom Page Layout */
+.portfolio-layout {
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Disable body scroll */
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+
+/* Allow scrolling only in the projects column */
+.scrollable-col {
+    height: 100%;
+    overflow-y: auto; /* Scroll internally */
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+    /* Hide scrollbar for cleaner look (optional - works in WebKit) */
+    .scrollable-col::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .scrollable-col::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+
+/* Skill Circles */
+.skill-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 5px;
+    transition: transform 0.2s;
+}
+
+    .skill-circle:hover {
+        transform: scale(1.1);
+        border-color: #0d6efd;
+    }
+
+    .skill-circle img {
+        width: 70%;
+        height: 70%;
+        object-fit: contain;
+    }
+
+/* Project Cards */
+.project-card {
+    transition: box-shadow 0.3s;
+}
+
+    .project-card:hover {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+/* RESPONSIVE: On mobile/tablet, stack everything and scroll normally */
+@media (max-width: 991.98px) {
+    .portfolio-layout {
+        height: auto;
+        overflow: visible;
+    }
+
+    .scrollable-col {
+        height: auto;
+        overflow-y: visible;
+    }
+}

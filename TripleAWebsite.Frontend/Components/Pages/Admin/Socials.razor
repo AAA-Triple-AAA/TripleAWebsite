@@ -1,0 +1,89 @@
+﻿@page "/admin/socials"
+@using Microsoft.EntityFrameworkCore
+@using TripleAWebsite.Frontend.Data
+@inject ApplicationDbContext DbContext
+@rendermode InteractiveServer
+
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center">
+            <a href="/admin/dashboard" class="btn btn-outline-secondary me-3" title="Back to Dashboard">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="fw-bold m-0">Manage Social Links</h1>
+        </div>
+        <a href="/admin/social/edit" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New
+        </a>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="spinner-border text-primary"></div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+            <ul class="list-group list-group-flush">
+                @foreach (var link in _socials)
+                {
+                    <li class="list-group-item d-flex align-items-center p-3 hover-bg">
+
+                        <div class="me-3">
+                            <span class="badge bg-light text-secondary border rounded-pill">#@link.DisplayOrder</span>
+                        </div>
+
+                        <div class="me-3 d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 48px; height: 48px;">
+                            <i class="@link.IconClass fs-4 text-primary"></i>
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <div class="fw-bold text-dark">@link.Name</div>
+                            <div class="small text-muted text-truncate" style="max-width: 300px;">@link.Url</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="/admin/social/edit/@link.Id" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteSocial(link)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </li>
+                }
+
+                @if (_socials.Count == 0)
+                {
+                    <li class="list-group-item text-center py-5 text-muted">
+                        No links found. Add your GitHub or LinkedIn!
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-bg:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+@code {
+    private List<SocialLink> _socials = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _socials = await DbContext.SocialLinks.OrderBy(s => s.DisplayOrder).ToListAsync();
+        isLoading = false;
+    }
+
+    private async Task DeleteSocial(SocialLink link)
+    {
+        DbContext.SocialLinks.Remove(link);
+        await DbContext.SaveChangesAsync();
+        _socials.Remove(link);
+    }
+}

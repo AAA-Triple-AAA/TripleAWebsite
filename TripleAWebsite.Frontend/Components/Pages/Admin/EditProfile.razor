@@ -1,0 +1,162 @@
+﻿@page "/admin/profile"
+@using Microsoft.EntityFrameworkCore
+@using TripleAWebsite.Frontend.Data
+@using TripleAWebsite.Frontend.Services
+@inject ApplicationDbContext DbContext
+@inject FileService FileService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<div class="container py-5" style="max-width: 800px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/admin/dashboard" class="btn btn-outline-secondary me-3">&larr; Back</a>
+        <h2 class="fw-bold m-0">Edit Profile</h2>
+    </div>
+
+    @if (Model is null)
+    {
+        <div class="spinner-border text-primary" role="status"></div>
+    }
+    else
+    {
+        <EditForm Model="Model" OnValidSubmit="SaveProfile" FormName="ProfileForm">
+            <DataAnnotationsValidator />
+
+            <ValidationSummary class="alert alert-danger mb-3" />
+
+            <div class="card shadow-sm p-4">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <InputText @bind-Value="Model.FullName" class="form-control" placeholder="e.g. Adrian" />
+                        <ValidationMessage For="() => Model.FullName" class="text-danger small" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Job Title</label>
+                        <InputText @bind-Value="Model.JobTitle" class="form-control" placeholder="e.g. Software Engineer" />
+                        <ValidationMessage For="() => Model.JobTitle" class="text-danger small" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Bio / Introduction</label>
+                    <InputTextArea @bind-Value="Model.Bio" class="form-control" rows="5" placeholder="Tell us about yourself..." />
+                    <ValidationMessage For="() => Model.Bio" class="text-danger small" />
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Profile Photo</label>
+                        @if (!string.IsNullOrEmpty(Model.ProfilePhotoUrl))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.ProfilePhotoUrl" alt="Current" height="60" class="rounded-circle border" />
+                            </div>
+                        }
+                        <InputFile OnChange="@(e => UploadFile(e, "photo"))" class="form-control" accept=".jpg,.png,.jpeg" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Resume (PDF)</label>
+                        @if (!string.IsNullOrEmpty(Model.ResumeUrl))
+                        {
+                            <div class="mb-2">
+                                <a href="@Model.ResumeUrl" target="_blank" class="badge bg-success text-decoration-none">Current Resume</a>
+                            </div>
+                        }
+                        <InputFile OnChange="@(e => UploadFile(e, "resume"))" class="form-control" accept=".pdf" />
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        @if (isSaving)
+                        {
+                            <span><span class="spinner-border spinner-border-sm"></span> Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Save Changes</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    // REMOVED: [SupplyParameterFromForm] (Not needed for Interactive Server)
+    private Profile? Model { get; set; }
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load existing profile or create a default empty one
+        try
+        {
+            Model = await DbContext.Profiles.FirstOrDefaultAsync() ?? new Profile();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading profile: {ex.Message}");
+        }
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs e, string type)
+    {
+        if (type == "photo")
+        {
+            // 1. Cleanup: Delete the old photo if it exists
+            if (!string.IsNullOrEmpty(Model!.ProfilePhotoUrl))
+            {
+                FileService.DeleteFile(Model.ProfilePhotoUrl);
+            }
+
+            // 2. Save new photo (We stick to GUIDs for photos to avoid browser caching issues)
+            var path = await FileService.SaveFileAsync(e.File);
+            Model.ProfilePhotoUrl = path;
+        }
+        else if (type == "resume")
+        {
+            // 1. Cleanup: Delete the old resume if it exists
+            if (!string.IsNullOrEmpty(Model!.ResumeUrl))
+            {
+                FileService.DeleteFile(Model.ResumeUrl);
+            }
+
+            // 2. Generate Friendly Name
+            // Result: "Adrian-Abella-Acosta-Resume.pdf"
+            var friendlyName = string.IsNullOrWhiteSpace(Model!.FullName)
+                ? "Resume"
+                : $"{Model.FullName.Trim()} - Resume";
+
+            // 3. Save with custom name
+            var path = await FileService.SaveFileAsync(e.File, friendlyName);
+            Model.ResumeUrl = path;
+        }
+    }
+
+    private async Task SaveProfile()
+    {
+        isSaving = true; // Show loading spinner
+        await InvokeAsync(StateHasChanged); // Force UI update
+
+        try
+        {
+            if (Model!.Id == 0)
+                DbContext.Profiles.Add(Model);
+            else
+                DbContext.Profiles.Update(Model);
+
+            await DbContext.SaveChangesAsync();
+            Nav.NavigateTo("/admin/dashboard");
+        }
+        catch (Exception ex)
+        {
+            // Log error so we can see it in the console if it crashes
+            Console.WriteLine($"Error saving profile: {ex.Message}");
+            isSaving = false;
+        }
+    }
+}

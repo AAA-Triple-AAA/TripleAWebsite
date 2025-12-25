@@ -1,0 +1,33 @@
+services:
+  frontend:
+    image: ghcr.io/AAA-Triple-AAA/TripleAWebsite:latest
+    container_name: triplea_app
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # This OVERRIDES your appsettings.json to use the volume path
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/app.db
+    volumes:
+      # Map the named volume 'app_data' to the folder inside the container
+      - app_data:/app/data
+      # Map user uploads so they persist
+      - uploads_data:/app/wwwroot/uploads
+
+  nginx:
+    image: nginx:alpine
+    container_name: triplea_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Placeholder for SSL certificates (we will set this up later)
+      # - ./certbot/conf:/etc/letsencrypt/:ro
+      # - ./certbot/www:/var/www/certbot/:ro
+    depends_on:
+      - frontend
+
+volumes:
+  app_data:
+  uploads_data:

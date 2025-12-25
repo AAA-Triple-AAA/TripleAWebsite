@@ -1,0 +1,113 @@
+﻿@page "/admin/projects"
+@using Microsoft.EntityFrameworkCore
+@using TripleAWebsite.Frontend.Data
+@using TripleAWebsite.Frontend.Services
+@inject ApplicationDbContext DbContext
+@inject FileService FileService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center">
+            <a href="/admin/dashboard" class="btn btn-outline-secondary me-3" title="Back to Dashboard">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="fw-bold m-0">Manage Projects</h1>
+        </div>
+
+        <a href="/admin/project/edit" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New
+        </a>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="spinner-border text-primary" role="status"></div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle shadow-sm border">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 80px;">Order</th>
+                        <th style="width: 100px;">Image</th>
+                        <th>Name / Description</th>
+                        <th style="width: 150px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in _projects)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge bg-secondary">@p.DisplayOrder</span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                {
+                                    <img src="@p.ImageUrl" height="50" class="rounded border" style="object-fit: cover; width: 80px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">No Image</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="fw-bold">@p.Name</div>
+                                <div class="text-muted small text-truncate" style="max-width: 300px;">@p.Description</div>
+                            </td>
+                            <td>
+                                <a href="/admin/project/edit/@p.Id" class="btn btn-sm btn-outline-primary me-2" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger" title="Delete" @onclick="() => DeleteProject(p)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    @if (_projects.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                No projects found. Click "Add New" to get started!
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Project> _projects = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load projects ordered by your custom rank
+        _projects = await DbContext.Projects
+            .OrderBy(p => p.DisplayOrder)
+            .ToListAsync();
+        isLoading = false;
+    }
+
+    private async Task DeleteProject(Project project)
+    {
+        // 1. Delete the image file from the server to save space
+        if (!string.IsNullOrEmpty(project.ImageUrl))
+        {
+            FileService.DeleteFile(project.ImageUrl);
+        }
+
+        // 2. Remove the record from the database
+        DbContext.Projects.Remove(project);
+        await DbContext.SaveChangesAsync();
+
+        // 3. Update the UI list instantly
+        _projects.Remove(project);
+    }
+}
