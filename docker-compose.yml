@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ghcr.io/AAA-Triple-AAA/tripleawebsite:latest
+    image: ghcr.io/aaa-triple-aaa/tripleawebsite:latest
     container_name: triplea_app
     restart: always
     environment:
@@ -22,9 +22,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      # Placeholder for SSL certificates (we will set this up later)
-      # - ./certbot/conf:/etc/letsencrypt/:ro
-      # - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf:/etc/letsencrypt/:ro
+      - ./certbot/www:/var/www/certbot/:ro
     depends_on:
       - frontend
 
