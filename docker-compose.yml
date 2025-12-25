@@ -21,6 +21,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /opt/tripleawebsite/certbot/conf:/etc/letsencrypt/:ro
       - /opt/tripleawebsite/certbot/www:/var/www/certbot/:ro
+      - uploads_data:/var/www/uploads:ro
     depends_on:
       - frontend
 
