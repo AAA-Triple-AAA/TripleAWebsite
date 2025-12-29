@@ -5,12 +5,9 @@ services:
     restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      # This OVERRIDES your appsettings.json to use the volume path
       - ConnectionStrings__DefaultConnection=Data Source=/app/data/app.db
     volumes:
-      # Map the named volume 'app_data' to the folder inside the container
       - app_data:/app/data
-      # Map user uploads so they persist
       - uploads_data:/app/wwwroot/uploads
 
   nginx:
@@ -22,8 +19,9 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certbot/conf:/etc/letsencrypt/:ro
-      - ./certbot/www:/var/www/certbot/:ro
+      - /opt/tripleawebsite/certbot/conf:/etc/letsencrypt/:ro
+      - /opt/tripleawebsite/certbot/www:/var/www/certbot/:ro
+      - uploads_data:/var/www/uploads:ro
     depends_on:
       - frontend
 
