@@ -76,3 +76,8 @@ html, body {
         overflow-y: visible;
     }
 }
+
+/* Accessibility Fix: Darken the text color for better contrast */
+.skill-circle.text-primary {
+    color: #052c65 !important; /* Dark Blue (Passes WCAG AA) */
+}
