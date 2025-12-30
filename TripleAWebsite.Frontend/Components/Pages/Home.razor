@@ -31,7 +31,7 @@
 
             <hr class="mb-5 border-secondary opacity-25" />
 
-            <h5 class="fw-bold text-uppercase text-muted small mb-3">Tech Stack</h5>
+            <h3 class="fw-bold text-uppercase text-muted small mb-3 h5">Tech Stack</h3>
             <div class="d-flex flex-wrap gap-2">
                 @foreach (var skill in Skills.Take(6))
                 {
@@ -96,7 +96,7 @@
                                 </div>
                             }
                             <div class="card-body p-4">
-                                <h4 class="card-title fw-bold mb-2">@project.Name</h4>
+                                <h3 class="card-title fw-bold mb-2 h4">@project.Name</h3>
                                 <p class="card-text text-secondary mb-4">@project.Description</p>
                                 <div class="d-flex gap-2">
                                     @if (!string.IsNullOrEmpty(project.GithubUrl))
